@@ -12,49 +12,50 @@ import java.util.List;
 
 @Controller
 public class UserController {
-    @Autowired private UserService userService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/users")
-    public String showUserList(Model model){
+    public String showUserList(Model model) {
         List<User> listUser = userService.listAll();
         model.addAttribute("listUser", listUser);
         return "users";
     }
 
     @GetMapping("/users/new")
-    public String showNewForm(Model model){
+    public String showNewForm(Model model) {
         model.addAttribute("user", new User());
         model.addAttribute("pageTitle", "Add New User");
         return "user_form";
     }
 
     @PostMapping("/users/save")
-    public String saveUser(User user, RedirectAttributes redirectAttributes){
+    public String saveUser(User user, RedirectAttributes redirectAttributes) {
         userService.save(user);
-        redirectAttributes.addFlashAttribute("message","The user has been saved successfully");
+        redirectAttributes.addFlashAttribute("message", "The user has been saved successfully");
         return "redirect:/users";
     }
 
     @GetMapping("/users/edit/{id}")
-    public String showEditForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes){
+    public String showEditForm(@PathVariable("id") Integer id, Model model, RedirectAttributes redirectAttributes) {
         try {
             User user = userService.get(id);
             model.addAttribute("user", user);
             model.addAttribute("pageTitle", "Edit User (ID: " + id + ")");
             return "user_form";
         } catch (UserNotFoundException e) {
-            redirectAttributes.addFlashAttribute("message",e.getMessage());
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
             return "redirect:/users";
         }
     }
 
     @GetMapping("/users/delete/{id}")
-    public String deleteUser(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes){
+    public String deleteUser(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
         try {
             userService.delete(id);
-            redirectAttributes.addFlashAttribute("message","The user ID: " + id + " has been deleted");
+            redirectAttributes.addFlashAttribute("message", "The user ID: " + id + " has been deleted");
         } catch (UserNotFoundException e) {
-            redirectAttributes.addFlashAttribute("message",e.getMessage());
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         return "redirect:/users";
     }
